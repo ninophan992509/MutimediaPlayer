@@ -1,0 +1,155 @@
+﻿<Window x:Class="MediaPlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:VM="clr-namespace:MediaPlayer"     
+       
+        mc:Ignorable="d" Loaded="Window_Loaded" Closed="Window_Closed" MinHeight="100" MinWidth="100" >
+    <Window.DataContext>
+        <VM:ListPlayList />
+    </Window.DataContext>
+   
+    <Window.Resources>
+        <VM:PlayList x:Key="PL"/>
+        <VM:ListPlayList x:Key="LPL"/>
+        <ContextMenu x:Key="cmButton" FontSize="10">
+            <MenuItem Header="New PlayList" Click="NewPlayList_Click" />
+            <MenuItem Header="Add PlayList" Click="AddPlayList_Click" />
+        </ContextMenu>
+        <ContextMenu x:Key="cmPlayList">
+            <MenuItem Header="Add" Click="AddFile_Click"/>
+            <MenuItem Header="Play" Click="PlayPL_Click"/>
+            <MenuItem Header="Delete" Click="DeletePL_Click"/>
+        </ContextMenu>
+        <ContextMenu x:Key="cmSFile">
+            <MenuItem Header="Play" Click="Play_Click"/>
+            <MenuItem Header="Delete" Click="Delete_Click"/>
+        </ContextMenu>
+      
+    </Window.Resources>
+
+
+    <Grid Name="GridViewBG" >
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="655*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="Images/dj.jpg"/>
+        </Grid.Background>
+
+
+        <Grid x:Name="GridBackground" Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="180*"/>
+                <RowDefinition Height="625*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Border BorderThickness="2" BorderBrush="DeepSkyBlue" CornerRadius="5" Margin="7,7,7,0">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Height="25" Width="Auto" VerticalAlignment="Top">
+                            <Image Width="15" Height="15" Margin="5" Source="Images/replay.png"/>
+                            <TextBlock  Text="Phát gần đây nhất" Margin="5" Foreground="DeepSkyBlue"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Width="Auto" >
+                            <Image Name ="imgThumbnail" Source="{Binding Path=Thumbnail}"  Width ="100" Height="50" Margin="5" Grid.Column="0"/>
+                            <StackPanel Orientation="Vertical" Margin="5"> 
+                            <TextBlock x:Name="txtPlaylist" Text="{Binding Path=Name}" Foreground="White" FontSize="12"  Grid.Column="1"
+                                       TextTrimming="CharacterEllipsis" Width="Auto" Height="20" TextWrapping="Wrap" Margin="5"/>
+                            <TextBlock x:Name="txtName" Text="{Binding Path=FileName}" Foreground="White" FontSize="12"  Grid.Column="1"
+                                       TextTrimming="CharacterEllipsis" Width="Auto" Height="20" TextWrapping="Wrap" Margin="5"/>
+                            
+                            </StackPanel>
+                        </StackPanel>
+                       
+                    </StackPanel> 
+                </Border>
+            </Grid>
+
+            
+            <Grid Grid.Row="1">
+               
+                <Border  x:Name="RightBorder" BorderThickness="2" BorderBrush="DeepSkyBlue" CornerRadius="5"  Margin="7" >
+                    <ScrollViewer Foreground="Transparent" Background="Transparent" >
+                    <StackPanel Orientation="Vertical">
+                        <ListBox x:Name="ListBoxFile"  ItemsSource="{Binding Path=PlayLists}" DataContext="{StaticResource PL}" SelectedIndex="{Binding SIndex}" ContextMenu="{StaticResource cmSFile}"  
+                               SelectedItem ="{Binding Path=SMultimediaFile}" Margin="2" HorizontalAlignment="Center"
+                                 MouseDoubleClick="ListBoxFile_MouseDoubleClick" Background="Transparent"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
+                            <ListBox.ItemsPanel >
+                                <ItemsPanelTemplate >
+                                    <WrapPanel Orientation="Horizontal"  />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemTemplate >
+                                <DataTemplate >
+                                    <StackPanel Orientation="Vertical">
+                                        <Image Name ="Thumbnail" Source="{Binding Path=Thumbnail}" Width ="180" Height="100"/>
+                                        <TextBlock Text="{Binding Path=FileName}" Foreground="White" FontSize="15" 
+                                       TextTrimming="CharacterEllipsis" Width="180" Height="40" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                   
+            </Grid>
+           
+        </Grid>
+        
+
+        <ScrollViewer  VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="GridMenu" Grid.Column="0" Width="250" HorizontalAlignment="Left"  Background="Transparent">
+
+                <Border BorderBrush="DeepSkyBlue" BorderThickness="2" CornerRadius="5" Margin="7">
+                    <StackPanel Orientation="Vertical" Margin="0,50,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" >
+                        <Button x:Name="VideoMenu" Background="Transparent" Height="50"  BorderThickness="0"   ContextMenu="{StaticResource cmButton}"  MouseUp="VideoMenu_MouseUp" >
+                            <StackPanel Orientation="Horizontal" Background="{x:Null}" HorizontalAlignment="Center">
+                                <Image Source="Images/video.png" Height="22" Width="22" VerticalAlignment="Center" Margin="4" />
+                                <TextBlock Text="Videos" FontSize="16" VerticalAlignment="Center" Foreground="DeepSkyBlue"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <ListView x:Name="VideoPlaylist" Height="Auto" HorizontalAlignment="Center" ContextMenu="{StaticResource cmPlayList}" DataContext="{StaticResource LPL}"
+                          ItemsSource="{Binding Path=ListPlayLists}" SelectedItem="{Binding Path= SPlayList}" SelectionMode="Single" Background="Transparent"
+                          MouseLeftButtonUp="VideoPlaylist_MouseLeftButtonUp"   MouseUp="VideoPlaylist_MouseUp" BorderThickness="0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate >
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Images/album.png" Height="10" Width="10" />
+                                        <TextBlock Text="{Binding Name}"  FontSize="12" Foreground="White" TextTrimming="CharacterEllipsis" Width="150"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Button x:Name="MusicMenu" Background="Transparent" Height="50" BorderThickness="0"  ContextMenu="{StaticResource cmButton}" MouseUp="MusicMenu_MouseUp"  >
+                            <StackPanel Orientation="Horizontal" Background="{x:Null}"  HorizontalAlignment="Center">
+                                <Image Source="Images/music.png" Height="20" Width="20" VerticalAlignment="Center" Margin="4" />
+                                <TextBlock Text="Musics" FontSize="16" VerticalAlignment="Center" Foreground="DeepSkyBlue"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <ListView x:Name="MusicPlaylist"  Height="Auto" HorizontalAlignment="Center" DataContext="{StaticResource LPL}"
+                          ContextMenu="{StaticResource cmPlayList}" ItemsSource="{Binding Path=ListPlayLists}" MouseUp="MusicPlaylist_MouseUp"
+                          SelectedItem="{Binding Path=SPlayList}"  MouseLeftButtonUp="MusicPlaylist_MouseLeftButtonUp" Background="Transparent" BorderThickness="0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="4">
+                                        <Image Source="Images/playlist.png" Height="10" Width="10" Margin="2" />
+                                        <TextBlock Text="{Binding Name}"  FontSize="12" Foreground="White" TextTrimming="CharacterEllipsis" Width="150"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+        </ScrollViewer>
+       
+    </Grid>
+</Window>
